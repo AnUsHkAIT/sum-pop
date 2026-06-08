@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sum Pop — Sports Academy Games</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN SYSTEM ───────────────────────── */
+:root {
+  --bg:        #0e0e1a;
+  --bg2:       #13132a;
+  --panel:     rgba(255,255,255,0.04);
+  --border:    rgba(255,255,255,0.08);
+  --text:      #f0f0ff;
+  --dim:       rgba(240,240,255,0.4);
+
+  --c1: #FF4D6D;  /* red-pink  */
+  --c2: #FFB347;  /* orange    */
+  --c3: #FFE566;  /* yellow    */
+  --c4: #4DFFA0;  /* mint      */
+  --c5: #4DB8FF;  /* sky blue  */
+  --c6: #B47DFF;  /* lavender  */
+  --c7: #FF7DCC;  /* hot pink  */
+
+  --correct: #4DFFA0;
+  --wrong:   #FF4D6D;
+  --gold:    #FFE566;
+
+  --font-head: 'Fredoka One', cursive;
+  --font-body: 'Nunito', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: var(--font-body);
+  color: var(--text);
+  height: 100vh; width: 100vw;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── BG STARS ─────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 20%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 20% 80%, rgba(255,255,255,0.15) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 85%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(2px 2px at 50% 50%, rgba(255,229,102,0.15) 0%, transparent 100%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── WRAPPER ──────────────────────────── */
+#app {
+  position: relative; z-index: 1;
+  width: min(520px, 100vw);
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 0 12px;
+}
+
+/* ── SCREEN MANAGER ───────────────────── */
+.screen { display: none; flex-direction: column; align-items: center; width: 100%; }
+.screen.active { display: flex; }
+
+/* ══════════════════════════════════════
+   TITLE SCREEN
+══════════════════════════════════════ */
+#s-title { gap: 0; padding-top: 32px; }
+
+.brand {
+  font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 20px;
+}
+
+.logo-wrap { position: relative; margin-bottom: 8px; }
+
+.logo {
+  font-family: var(--font-head);
+  font-size: clamp(52px, 11vw, 80px);
+  line-height: 1;
+  background: linear-gradient(135deg, #FF4D6D, #FFB347, #FFE566, #4DFFA0, #4DB8FF, #B47DFF);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 24px rgba(255,77,109,0.4));
+  animation: logoFloat 3s ease-in-out infinite alternate;
+}
+@keyframes logoFloat {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-8px); }
+}
+
+.logo-bubbles {
+  position: absolute; top: -8px; right: -16px;
+  display: flex; gap: 4px;
+}
+.lb { width: 18px; height: 18px; border-radius: 50%; animation: lbPop 2s ease-in-out infinite; }
+.lb:nth-child(1){ background: var(--c1); animation-delay: 0s;    width:14px; height:14px; }
+.lb:nth-child(2){ background: var(--c3); animation-delay: 0.3s;  }
+.lb:nth-child(3){ background: var(--c5); animation-delay: 0.6s;  width:12px; height:12px; }
+@keyframes lbPop {
+  0%,100%{ transform: scale(1); }
+  50%    { transform: scale(1.35); }
+}
+
+.tagline {
+  font-size: 15px; color: var(--dim); letter-spacing: 0.04em;
+  margin-bottom: 36px; font-weight: 600;
+}
+
+/* Mode cards */
+.mode-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-bottom: 28px; }
+
+.mode-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 22px;
+  display: flex; align-items: center; gap: 18px;
+  cursor: pointer;
+  transition: transform 0.16s, border-color 0.16s, background 0.16s;
+  text-align: left;
+}
+.mode-card:hover {
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.07);
+}
+.mode-card.easy  { border-color: rgba(77,255,160,0.35); }
+.mode-card.medium{ border-color: rgba(255,179,71,0.35); }
+.mode-card.hard  { border-color: rgba(255,77,109,0.35); }
+.mode-card.easy:hover  { border-color: var(--c4); }
+.mode-card.medium:hover{ border-color: var(--c2); }
+.mode-card.hard:hover  { border-color: var(--c1); }
+
+.mode-icon { font-size: 32px; flex-shrink: 0; }
+
+.mode-info h3 {
+  font-family: var(--font-head); font-size: 20px;
+  line-height: 1.1; margin-bottom: 2px;
+}
+.mode-info p { font-size: 12px; color: var(--dim); font-weight: 600; }
+
+.mode-card.easy   .mode-info h3 { color: var(--c4); }
+.mode-card.medium .mode-info h3 { color: var(--c2); }
+.mode-card.hard   .mode-info h3 { color: var(--c1); }
+
+.highscores { display: flex; gap: 20px; }
+.hs-item { text-align: center; }
+.hs-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
+.hs-val   { font-family: var(--font-head); font-size: 22px; color: var(--gold); }
+
+/* ══════════════════════════════════════
+   GAME SCREEN
+══════════════════════════════════════ */
+#s-game { gap: 0; width: 100%; padding: 0; }
+
+/* HUD */
+.hud {
+  width: 100%;
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 14px 16px 10px;
+  gap: 12px;
+}
+.hud-block { display: flex; flex-direction: column; }
+.hud-block.right { align-items: flex-end; }
+.hud-lbl { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
+.hud-val {
+  font-family: var(--font-head); font-size: 26px;
+  color: var(--text); line-height: 1;
+  transition: transform 0.1s, color 0.2s;
+}
+.hud-val.pop { transform: scale(1.35); color: var(--gold); }
+
+/* Target display */
+.target-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.target-lbl { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
+.target-eq {
+  display: flex; align-items: center; gap: 8px;
+}
+.target-num {
+  font-family: var(--font-head); font-size: 32px;
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(255,229,102,0.5);
+  transition: transform 0.15s;
+}
+.target-num.ping { animation: numPing 0.25s ease; }
+@keyframes numPing {
+  0%  { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100%{ transform: scale(1); }
+}
+
+.current-sum {
+  font-family: var(--font-head); font-size: 20px;
+  color: var(--dim);
+  transition: color 0.15s;
+  min-width: 32px; text-align: center;
+}
+.current-sum.over { color: var(--wrong); }
+.current-sum.match{ color: var(--correct); }
+
+.sep { font-family: var(--font-head); font-size: 16px; color: var(--dim); }
+
+/* Timer bar */
+.timer-bar-wrap {
+  width: 100%; height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px; overflow: hidden;
+  margin: 0 0 10px;
+}
+.timer-bar-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--c4), var(--c5));
+  transition: width 0.25s linear, background 0.4s;
+}
+.timer-bar-fill.warn  { background: linear-gradient(90deg, var(--c2), var(--c3)); }
+.timer-bar-fill.danger{ background: linear-gradient(90deg, var(--c1), var(--c7)); }
+
+/* Streak pill */
+.streak-row {
+  display: flex; justify-content: center; margin-bottom: 6px; min-height: 24px;
+}
+.streak-pill {
+  background: rgba(255,229,102,0.12);
+  border: 1px solid rgba(255,229,102,0.3);
+  border-radius: 20px; padding: 2px 14px;
+  font-family: var(--font-head); font-size: 13px;
+  color: var(--gold);
+  display: none; align-items: center; gap: 6px;
+  animation: pillIn 0.2s ease;
+}
+.streak-pill.visible { display: flex; }
+@keyframes pillIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ── CANVAS AREA ─────────────────────── */
+.canvas-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: 20px; overflow: hidden;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+}
+#game-canvas { display: block; width: 100%; height: auto; cursor: crosshair; }
+
+/* Tap hint */
+.tap-hint {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: var(--dim); pointer-events: none;
+  letter-spacing: 0.05em; font-weight: 700;
+}
+
+/* ── SELECTED BUBBLES ROW ─────────────── */
+.selected-row {
+  width: 100%; padding: 8px 16px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  min-height: 44px;
+}
+.sel-bubble {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 14px; color: #fff;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);
+  cursor: pointer; transition: transform 0.1s;
+  flex-shrink: 0;
+}
+.sel-bubble:hover { transform: scale(1.15); }
+
+.sel-op {
+  font-family: var(--font-head); font-size: 16px; color: var(--dim);
+}
+
+.btn-pop {
+  margin-left: auto;
+  font-family: var(--font-head); font-size: 16px;
+  background: linear-gradient(135deg, var(--c4), var(--c5));
+  border: none; border-radius: 24px;
+  padding: 8px 20px; color: #0e0e1a;
+  cursor: pointer; transition: all 0.15s;
+  box-shadow: 0 4px 16px rgba(77,255,160,0.3);
+  display: none;
+}
+.btn-pop.visible { display: block; }
+.btn-pop:hover   { transform: scale(1.06); box-shadow: 0 6px 24px rgba(77,255,160,0.5); }
+.btn-pop:active  { transform: scale(0.96); }
+
+/* ── FEEDBACK OVERLAY ─────────────────── */
+.feedback-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 52px;
+  pointer-events: none;
+  opacity: 0; border-radius: 20px;
+  transition: opacity 0.08s;
+}
+.feedback-overlay.show { opacity: 1; }
+.feedback-overlay.correct { background: rgba(77,255,160,0.14); color: var(--correct); }
+.feedback-overlay.wrong   { background: rgba(255,77,109,0.12);  color: var(--wrong);   }
+
+/* ── COMBO POPUP ──────────────────────── */
+.combo-pop {
+  position: absolute; top: 30%; left: 50%; transform: translateX(-50%);
+  font-family: var(--font-head); font-size: 28px; color: var(--gold);
+  pointer-events: none; opacity: 0;
+  text-shadow: 0 0 20px rgba(255,229,102,0.6);
+  white-space: nowrap;
+}
+.combo-pop.show {
+  animation: comboAnim 0.85s ease forwards;
+}
+@keyframes comboAnim {
+  0%  { opacity:0; transform: translateX(-50%) translateY(0)   scale(0.6); }
+  20% { opacity:1; transform: translateX(-50%) translateY(-8px) scale(1.2); }
+  80% { opacity:1; transform: translateX(-50%) translateY(-20px)scale(1);   }
+  100%{ opacity:0; transform: translateX(-50%) translateY(-40px)scale(0.9); }
+}
+
+/* ══════════════════════════════════════
+   RESULTS SCREEN
+══════════════════════════════════════ */
+#s-results { padding: 40px 20px; gap: 0; align-items: center; }
+
+.result-emoji { font-size: 72px; margin-bottom: 12px; animation: emojiSpin 0.5s ease; }
+@keyframes emojiSpin {
+  from { transform: rotateY(0); }
+  to   { transform: rotateY(360deg); }
+}
+.result-headline {
+  font-family: var(--font-head); font-size: 42px;
+  background: linear-gradient(135deg, var(--c4), var(--c5));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+.result-sub { font-size: 14px; color: var(--dim); margin-bottom: 32px; font-weight: 700; }
+
+.result-stats {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+  width: 100%; margin-bottom: 28px;
+}
+.result-stat {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 10px; text-align: center;
+}
+.result-stat-val {
+  font-family: var(--font-head); font-size: 28px; color: var(--gold);
+  line-height: 1; margin-bottom: 4px;
+}
+.result-stat-lbl { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dim); }
+
+.result-msg { font-size: 13px; color: var(--dim); font-weight: 700; margin-bottom: 28px; text-align: center; line-height: 1.6; }
+.result-msg strong { color: var(--text); }
+
+.result-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.result-btn {
+  font-family: var(--font-head); font-size: 17px;
+  padding: 13px 28px; border-radius: 28px; border: none;
+  cursor: pointer; transition: all 0.15s;
+}
+.result-btn.primary {
+  background: linear-gradient(135deg, var(--c4), var(--c5));
+  color: #0e0e1a;
+  box-shadow: 0 6px 20px rgba(77,255,160,0.35);
+}
+.result-btn.primary:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(77,255,160,0.5); }
+.result-btn.secondary {
+  background: var(--panel); border: 1px solid var(--border); color: var(--dim);
+}
+.result-btn.secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+/* ── PAUSE / INFO ─────────────────────── */
+.info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  width: 100%; padding: 8px 16px 0;
+}
+.info-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 14px; color: var(--dim); font-weight: 700;
+  font-family: var(--font-body);
+  padding: 4px 8px; border-radius: 8px;
+  transition: color 0.15s, background 0.15s;
+}
+.info-btn:hover { color: var(--text); background: var(--panel); }
+.level-tag {
+  font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--dim); font-weight: 700;
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- TITLE -->
+  <div id="s-title" class="screen active">
+    <div class="brand">Sports Academy Games</div>
+    <div class="logo-wrap">
+      <div class="logo">Sum Pop</div>
+      <div class="logo-bubbles">
+        <div class="lb"></div><div class="lb"></div><div class="lb"></div>
+      </div>
+    </div>
+    <div class="tagline">Pop bubbles that add up to the target!</div>
+    <div class="mode-cards">
+      <div class="mode-card easy"   onclick="startGame('easy')">
+        <span class="mode-icon">🌱</span>
+        <div class="mode-info">
+          <h3>Easy</h3>
+          <p>Targets 5–15 · Numbers 1–9 · 90 seconds</p>
+        </div>
+      </div>
+      <div class="mode-card medium" onclick="startGame('medium')">
+        <span class="mode-icon">⚡</span>
+        <div class="mode-info">
+          <h3>Medium</h3>
+          <p>Targets 10–30 · Numbers 1–15 · 75 seconds</p>
+        </div>
+      </div>
+      <div class="mode-card hard"   onclick="startGame('hard')">
+        <span class="mode-icon">🔥</span>
+        <div class="mode-info">
+          <h3>Hard</h3>
+          <p>Targets 15–50 · Numbers 1–25 · 60 seconds</p>
+        </div>
+      </div>
+    </div>
+    <div class="highscores" id="hs-display"></div>
+  </div>
+
+  <!-- GAME -->
+  <div id="s-game" class="screen">
+    <div class="hud">
+      <div class="hud-block">
+        <span class="hud-lbl">Score</span>
+        <span class="hud-val" id="hud-score">0</span>
+      </div>
+      <div class="target-wrap">
+        <span class="target-lbl">Target</span>
+        <div class="target-eq">
+          <span class="current-sum" id="cur-sum">0</span>
+          <span class="sep">→</span>
+          <span class="target-num" id="target-num">?</span>
+        </div>
+      </div>
+      <div class="hud-block right">
+        <span class="hud-lbl">Level</span>
+        <span class="hud-val" id="hud-level">1</span>
+      </div>
+    </div>
+
+    <div class="timer-bar-wrap" style="padding: 0 16px; background:none;">
+      <div class="timer-bar-fill" id="timer-bar" style="width:100%"></div>
+    </div>
+
+    <div class="streak-row">
+      <div class="streak-pill" id="streak-pill">🔥 <span id="streak-txt">x2 Streak!</span></div>
+    </div>
+
+    <div class="canvas-wrap" id="canvas-wrap">
+      <canvas id="game-canvas"></canvas>
+      <div class="feedback-overlay" id="fb-correct">✓</div>
+      <div class="feedback-overlay" id="fb-wrong">✗</div>
+      <div class="combo-pop" id="combo-pop"></div>
+      <div class="tap-hint" id="tap-hint">Tap bubbles · select numbers that sum to the target</div>
+    </div>
+
+    <div class="selected-row" id="selected-row">
+      <button class="btn-pop" id="btn-pop" onclick="tryPop()">POP! 🎯</button>
+    </div>
+
+    <div class="info-row">
+      <button class="info-btn" onclick="endGame(true)">✕ Quit</button>
+      <span class="level-tag" id="level-tag">EASY</span>
+      <button class="info-btn" id="hint-btn" onclick="showHint()">💡 Hint</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="s-results" class="screen">
+    <div class="result-emoji" id="res-emoji">🎉</div>
+    <div class="result-headline" id="res-headline">Nice!</div>
+    <div class="result-sub" id="res-sub">Here's how you did</div>
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="result-stat-val" id="res-score">0</div>
+        <div class="result-stat-lbl">Score</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-val" id="res-pops">0</div>
+        <div class="result-stat-lbl">Pops</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-val" id="res-acc">0%</div>
+        <div class="result-stat-lbl">Accuracy</div>
+      </div>
+    </div>
+    <div class="result-msg" id="res-msg"></div>
+    <div class="result-btns">
+      <button class="result-btn primary"   id="btn-again" onclick="restartGame()">Play Again</button>
+      <button class="result-btn secondary" onclick="showScreen('s-title')">Menu</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  SUM POP — Game Engine
+//  Sports Academy Games | AI-First Prototype
+//  Mechanic: select bubbles that sum to target, then pop.
+//  Math IS the interaction, not a quiz bolted on top.
+// ═══════════════════════════════════════════════════════
+
+// ── COLOUR PALETTE (mirrors CSS vars) ──────────────────
+const COLORS = ['#FF4D6D','#FFB347','#FFE566','#4DFFA0','#4DB8FF','#B47DFF','#FF7DCC'];
+const DARK_BG = '#0e0e1a';
+
+// ── DIFFICULTY CONFIG ───────────────────────────────────
+const CONFIGS = {
+  easy:   { time: 90, minN: 1, maxN: 9,  minT: 5,  maxT: 15, bubbleCount: 18, pointBase: 10 },
+  medium: { time: 75, minN: 1, maxN: 15, minT: 10, maxT: 30, bubbleCount: 20, pointBase: 15 },
+  hard:   { time: 60, minN: 1, maxN: 25, minT: 15, maxT: 50, bubbleCount: 22, pointBase: 20 },
+};
+
+// ── STATE ───────────────────────────────────────────────
+let S = {};   // game state
+let raf = null;
+
+// ── CANVAS SETUP ────────────────────────────────────────
+const canvas  = document.getElementById('game-canvas');
+const ctx     = canvas.getContext('2d');
+let CW = 0, CH = 0;
+
+function resizeCanvas() {
+  const wrap = document.getElementById('canvas-wrap');
+  CW = canvas.width  = wrap.clientWidth;
+  CH = canvas.height = Math.min(wrap.clientWidth * 0.72, 340);
+}
+
+// ── SCREEN MANAGER ──────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── HIGHSCORES ───────────────────────────────────────────
+function getHS() {
+  try { return JSON.parse(localStorage.getItem('sumPop_hs') || '{}'); } catch{ return {}; }
+}
+function setHS(diff, score) {
+  const hs = getHS();
+  if (!hs[diff] || score > hs[diff]) { hs[diff] = score; localStorage.setItem('sumPop_hs', JSON.stringify(hs)); }
+}
+function renderHS() {
+  const hs = getHS(); const el = document.getElementById('hs-display');
+  if(!Object.keys(hs).length){ el.innerHTML=''; return; }
+  el.innerHTML = Object.entries(hs).map(([d,s])=>`
+    <div class="hs-item">
+      <div class="hs-label">${d}</div>
+      <div class="hs-val">${s}</div>
+    </div>`).join('');
+}
+
+// ── BUBBLE CLASS ─────────────────────────────────────────
+class Bubble {
+  constructor(id, x, y, r, val, col) {
+    this.id = id; this.x = x; this.y = y; this.r = r;
+    this.val = val; this.col = col;
+    this.selected = false;
+    this.popping = false;
+    this.popProgress = 0;   // 0→1 animation
+    this.alive = true;
+    // Gentle float
+    this.vx = (Math.random()-0.5)*0.4;
+    this.vy = (Math.random()-0.5)*0.4;
+    this.baseY = y;
+    this.floatOffset = Math.random()*Math.PI*2;
+    this.floatSpeed  = 0.4 + Math.random()*0.4;
+    // Spawn animation
+    this.scale = 0; this.spawning = true;
+    // Hint glow
+    this.hinted = false;
+    this.hintTimer = 0;
+  }
+  update(dt, t) {
+    if(!this.alive) return;
+    if(this.spawning) {
+      this.scale = Math.min(1, this.scale + dt * 4);
+      if(this.scale >= 1) { this.scale = 1; this.spawning = false; }
+    }
+    if(this.popping) {
+      this.popProgress += dt * 3.5;
+      if(this.popProgress >= 1) { this.alive = false; }
+      return;
+    }
+    // Soft float
+    this.y = this.baseY + Math.sin(t * this.floatSpeed + this.floatOffset) * 5;
+    // Drift
+    this.x += this.vx * dt * 30;
+    this.y += this.vy * dt * 10;
+    // Wall bounce
+    const margin = this.r + 4;
+    if(this.x < margin)        { this.x = margin;      this.vx = Math.abs(this.vx); }
+    if(this.x > CW - margin)   { this.x = CW-margin;   this.vx = -Math.abs(this.vx); }
+    if(this.y < margin)        { this.baseY += 2; }
+    if(this.y > CH - margin)   { this.baseY -= 2; }
+    if(this.hinted) { this.hintTimer -= dt; if(this.hintTimer<=0){ this.hinted=false; } }
+  }
+  draw(ctx, t) {
+    if(!this.alive) return;
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    const s = this.popping
+      ? 1 + this.popProgress * 0.6
+      : this.scale;
+    ctx.scale(s, s);
+    const alpha = this.popping ? Math.max(0, 1 - this.popProgress * 1.4) : 1;
+    ctx.globalAlpha = alpha;
+
+    const r = this.r;
+
+    // Hint ring
+    if(this.hinted && !this.popping) {
+      ctx.beginPath(); ctx.arc(0,0,r+6,0,Math.PI*2);
+      ctx.strokeStyle = '#FFE566';
+      ctx.lineWidth = 3;
+      ctx.globalAlpha = 0.5 + 0.5*Math.sin(t*6);
+      ctx.stroke();
+      ctx.globalAlpha = alpha;
+    }
+
+    // Selection ring
+    if(this.selected && !this.popping) {
+      ctx.beginPath(); ctx.arc(0,0,r+5,0,Math.PI*2);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = '#fff'; ctx.shadowBlur = 12;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    // Shadow
+    ctx.beginPath(); ctx.arc(2, 4, r, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fill();
+
+    // Main circle gradient
+    const grad = ctx.createRadialGradient(-r*0.3,-r*0.3,r*0.1, 0,0,r);
+    grad.addColorStop(0, lighten(this.col, 40));
+    grad.addColorStop(0.6, this.col);
+    grad.addColorStop(1, darken(this.col, 30));
+    ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+    ctx.fillStyle = grad; ctx.fill();
+
+    // Shine
+    const shine = ctx.createRadialGradient(-r*0.35,-r*0.38,r*0.05,-r*0.35,-r*0.38,r*0.52);
+    shine.addColorStop(0, 'rgba(255,255,255,0.55)');
+    shine.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+    ctx.fillStyle = shine; ctx.fill();
+
+    // Pop ring burst
+    if(this.popping) {
+      const p = this.popProgress;
+      for(let i=0;i<8;i++) {
+        const angle = (i/8)*Math.PI*2;
+        const dist = p * r * 2.2;
+        const pr = r*(0.18-p*0.14);
+        if(pr<0) continue;
+        ctx.beginPath();
+        ctx.arc(Math.cos(angle)*dist, Math.sin(angle)*dist, Math.max(0,pr), 0, Math.PI*2);
+        ctx.fillStyle = this.col; ctx.fill();
+      }
+    }
+
+    // Number
+    if(!this.popping || this.popProgress < 0.3) {
+      ctx.fillStyle = '#fff';
+      ctx.font = `${r > 24 ? 'bold 17px' : 'bold 13px'} 'Fredoka One', cursive`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 4;
+      ctx.fillText(this.val, 0, 0);
+      ctx.shadowBlur = 0;
+    }
+
+    ctx.restore();
+  }
+}
+
+// ── COLOUR UTILS ────────────────────────────────────────
+function lighten(hex, pct) {
+  const n = parseInt(hex.slice(1),16);
+  const r = Math.min(255, ((n>>16)&0xff)+pct);
+  const g = Math.min(255, ((n>>8) &0xff)+pct);
+  const b = Math.min(255, ( n     &0xff)+pct);
+  return `rgb(${r},${g},${b})`;
+}
+function darken(hex, pct) {
+  const n = parseInt(hex.slice(1),16);
+  const r = Math.max(0, ((n>>16)&0xff)-pct);
+  const g = Math.max(0, ((n>>8) &0xff)-pct);
+  const b = Math.max(0, ( n     &0xff)-pct);
+  return `rgb(${r},${g},${b})`;
+}
+
+// ── BUBBLE PLACEMENT (no-overlap) ──────────────────────
+function placeBubbles(cfg) {
+  const bubbles = [];
+  const r = CW < 400 ? 22 : 26;
+  let attempts = 0;
+  while(bubbles.length < cfg.bubbleCount && attempts < 2000) {
+    attempts++;
+    const x = r + 8 + Math.random()*(CW - (r+8)*2);
+    const y = r + 8 + Math.random()*(CH - (r+8)*2);
+    let ok = true;
+    for(const b of bubbles) {
+      const dx=b.x-x, dy=b.y-y;
+      if(Math.sqrt(dx*dx+dy*dy) < (r+b.r)+6) { ok=false; break; }
+    }
+    if(ok) {
+      const val = rnd(cfg.minN, cfg.maxN);
+      const col = COLORS[bubbles.length % COLORS.length];
+      bubbles.push(new Bubble(bubbles.length, x, y, r, val, col));
+    }
+  }
+  return bubbles;
+}
+
+function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+
+// ── GENERATE A VALID TARGET ─────────────────────────────
+// Guarantee at least one solution exists using 2-4 visible bubbles.
+function generateTarget(bubbles, cfg) {
+  const alive = bubbles.filter(b => b.alive && !b.popping);
+  if(alive.length < 2) return rnd(cfg.minT, cfg.maxT);
+  // Pick 2–4 random alive bubbles and sum them
+  const k = Math.min(rnd(2,4), alive.length);
+  const picked = alive.sort(()=>Math.random()-0.5).slice(0,k);
+  const sum = picked.reduce((a,b)=>a+b.val, 0);
+  return Math.max(cfg.minT, Math.min(cfg.maxT, sum));
+}
+
+// ── START GAME ──────────────────────────────────────────
+let currentMode = 'easy';
+function startGame(mode) {
+  currentMode = mode;
+  resizeCanvas();
+  const cfg = CONFIGS[mode];
+  S = {
+    cfg, mode,
+    bubbles: placeBubbles(cfg),
+    selected: [],         // indices of selected bubbles
+    target: 0,
+    score: 0,
+    pops: 0,
+    attempts: 0,
+    streak: 0,
+    bestStreak: 0,
+    timeLeft: cfg.time,
+    timeTotal: cfg.time,
+    level: 1,
+    solved: 0,           // pops correct this level
+    running: true,
+    t: 0,               // elapsed time for animations
+    hintUsed: false,
+  };
+  S.target = generateTarget(S.bubbles, cfg);
+
+  document.getElementById('hud-level').textContent = '1';
+  document.getElementById('level-tag').textContent = mode.toUpperCase();
+  document.getElementById('tap-hint').style.display = 'block';
+  renderSelected();
+  updateHUD();
+  showScreen('s-game');
+
+  clearTimeout(S.timerHandle);
+  S.timerHandle = setInterval(tick, 1000);
+
+  if(raf) cancelAnimationFrame(raf);
+  (function loop(){
+    raf = requestAnimationFrame(loop);
+    render();
+  })();
+}
+
+function restartGame() { startGame(currentMode); }
+
+// ── 1-SECOND TICK ───────────────────────────────────────
+function tick() {
+  if(!S.running) return;
+  S.timeLeft = Math.max(0, S.timeLeft - 1);
+  updateTimerBar();
+  if(S.timeLeft === 0) endGame(false);
+}
+
+// ── RENDER LOOP ─────────────────────────────────────────
+let lastFrame = 0;
+function render(ts = 0) {
+  const dt = Math.min((ts - lastFrame)/1000, 0.05);
+  lastFrame = ts;
+  if(S.running || S.bubbles.some(b=>b.alive && b.popping)) S.t += dt;
+
+  ctx.clearRect(0,0,CW,CH);
+
+  // Subtle grid bg
+  ctx.fillStyle = '#13132a'; ctx.fillRect(0,0,CW,CH);
+  ctx.strokeStyle = 'rgba(255,255,255,0.025)'; ctx.lineWidth = 1;
+  for(let x=0;x<CW;x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,CH); ctx.stroke(); }
+  for(let y=0;y<CH;y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(CW,y); ctx.stroke(); }
+
+  // Connection lines between selected bubbles
+  if(S.selected && S.selected.length > 1) {
+    const sel = S.selected.map(id => S.bubbles.find(b=>b.id===id)).filter(Boolean);
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.lineWidth = 2;
+    ctx.setLineDash([6,4]);
+    for(let i=0;i<sel.length-1;i++){
+      ctx.beginPath(); ctx.moveTo(sel[i].x,sel[i].y); ctx.lineTo(sel[i+1].x,sel[i+1].y); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  }
+
+  S.bubbles.forEach(b => { b.update(dt, S.t); b.draw(ctx, S.t); });
+
+  // Refill if too few alive
+  const alive = S.bubbles.filter(b=>b.alive && !b.popping);
+  if(alive.length < 6 && S.running) refillBubbles();
+}
+
+// ── REFILL ──────────────────────────────────────────────
+function refillBubbles() {
+  const cfg = S.cfg;
+  const alive = S.bubbles.filter(b=>b.alive);
+  const r = CW < 400 ? 22 : 26;
+  let added = 0, attempts = 0;
+  while(added < 6 && attempts < 500) {
+    attempts++;
+    const x = r+8+Math.random()*(CW-(r+8)*2);
+    const y = r+8+Math.random()*(CH-(r+8)*2);
+    let ok = true;
+    for(const b of alive){
+      const dx=b.x-x,dy=b.y-y;
+      if(Math.sqrt(dx*dx+dy*dy)<(r+b.r)+6){ok=false;break;}
+    }
+    if(ok){
+      const val = rnd(cfg.minN, cfg.maxN);
+      const col = COLORS[Math.floor(Math.random()*COLORS.length)];
+      const nb = new Bubble(Date.now()+added, x, y, r, val, col);
+      S.bubbles.push(nb); alive.push(nb); added++;
+    }
+  }
+  S.target = generateTarget(alive, cfg);
+  updateHUD();
+}
+
+// ── CLICK / TAP ─────────────────────────────────────────
+canvas.addEventListener('click', e => {
+  if(!S.running) return;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = CW / rect.width;
+  const scaleY = CH / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top)  * scaleY;
+
+  document.getElementById('tap-hint').style.display = 'none';
+
+  for(const b of S.bubbles) {
+    if(!b.alive || b.popping || b.spawning) continue;
+    const dx = b.x-mx, dy = b.y-my;
+    if(dx*dx+dy*dy <= b.r*b.r) {
+      toggleSelect(b);
+      return;
+    }
+  }
+});
+
+function toggleSelect(b) {
+  const idx = S.selected.indexOf(b.id);
+  if(idx >= 0) {
+    S.selected.splice(idx,1);
+    b.selected = false;
+  } else {
+    S.selected.push(b.id);
+    b.selected = true;
+  }
+  updateSum();
+  renderSelected();
+}
+
+function updateSum() {
+  const sum = S.selected.reduce((a,id) => {
+    const b = S.bubbles.find(b=>b.id===id);
+    return a + (b ? b.val : 0);
+  }, 0);
+  const el = document.getElementById('cur-sum');
+  el.textContent = sum || '0';
+  el.className = 'current-sum' + (sum > S.target ? ' over' : sum === S.target ? ' match' : '');
+}
+
+// ── RENDER SELECTED ROW ─────────────────────────────────
+function renderSelected() {
+  const row = document.getElementById('selected-row');
+  const pop = document.getElementById('btn-pop');
+
+  // Remove old sel-bubbles
+  row.querySelectorAll('.sel-bubble,.sel-op').forEach(e=>e.remove());
+
+  const sel = S.selected.map(id=>S.bubbles.find(b=>b.id===id)).filter(Boolean);
+  sel.forEach((b,i) => {
+    if(i>0){
+      const op = document.createElement('span');
+      op.className='sel-op'; op.textContent='+'; row.insertBefore(op, pop);
+    }
+    const div = document.createElement('div');
+    div.className='sel-bubble';
+    div.style.background=b.col;
+    div.textContent=b.val;
+    div.onclick=()=>toggleSelect(b);
+    row.insertBefore(div, pop);
+  });
+
+  pop.classList.toggle('visible', sel.length >= 2);
+  updateSum();
+}
+
+// ── POP ATTEMPT ─────────────────────────────────────────
+function tryPop() {
+  if(!S.running || S.selected.length < 2) return;
+  const sel = S.selected.map(id=>S.bubbles.find(b=>b.id===id)).filter(Boolean);
+  const sum  = sel.reduce((a,b)=>a+b.val,0);
+  S.attempts++;
+
+  if(sum === S.target) {
+    // CORRECT
+    const pts = S.cfg.pointBase * sel.length * (1 + Math.floor(S.streak/3));
+    S.score += pts;
+    S.pops++;
+    S.streak++;
+    S.bestStreak = Math.max(S.bestStreak, S.streak);
+    S.solved++;
+
+    sel.forEach(b => { b.selected=false; b.popping=true; b.popProgress=0; });
+    S.selected = [];
+
+    // Level up every 5 correct pops
+    if(S.solved >= 5) {
+      S.solved = 0; S.level++;
+      document.getElementById('hud-level').textContent = S.level;
+      // Slightly harder targets
+      S.cfg = {
+        ...S.cfg,
+        minN: Math.min(S.cfg.minN+1, 20),
+        maxN: Math.min(S.cfg.maxN+2, 40),
+      };
+    }
+
+    showFeedback('correct', `+${pts}`);
+    showStreak();
+    popScoreVal();
+
+    setTimeout(()=>{
+      S.target = generateTarget(S.bubbles.filter(b=>b.alive && !b.popping), S.cfg);
+      updateHUD();
+      renderSelected();
+    }, 350);
+
+  } else {
+    // WRONG
+    S.streak = 0;
+    sel.forEach(b => { b.selected=false; });
+    S.selected = [];
+    showFeedback('wrong', null);
+    showStreak();
+    renderSelected();
+    // Shake canvas
+    const wrap = document.getElementById('canvas-wrap');
+    wrap.style.transform = 'translateX(-5px)';
+    setTimeout(()=>{ wrap.style.transition='transform 0.15s'; wrap.style.transform=''; setTimeout(()=>wrap.style.transition='',200); },0);
+  }
+  updateHUD();
+}
+
+// ── FEEDBACK FLASH ──────────────────────────────────────
+function showFeedback(type, pts) {
+  const el = document.getElementById(type==='correct'?'fb-correct':'fb-wrong');
+  el.textContent = type==='correct' ? (pts ? `+${pts}` : '✓') : '✗';
+  el.className = `feedback-overlay ${type} show`;
+  setTimeout(()=>{ el.classList.remove('show'); }, type==='correct'?500:600);
+}
+
+// ── STREAK PILL ─────────────────────────────────────────
+function showStreak() {
+  const pill = document.getElementById('streak-pill');
+  const txt  = document.getElementById('streak-txt');
+  if(S.streak >= 2) {
+    txt.textContent = `×${S.streak} Streak!`;
+    pill.classList.add('visible');
+    if(S.streak >= 4) showComboPop();
+  } else {
+    pill.classList.remove('visible');
+  }
+}
+function showComboPop() {
+  const el = document.getElementById('combo-pop');
+  const msgs = ['COMBO!','ON FIRE!','UNSTOPPABLE!','MATH WIZARD!'];
+  el.textContent = msgs[Math.min(Math.floor((S.streak-4)/2), msgs.length-1)] || 'COMBO!';
+  el.className = 'combo-pop';
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 900);
+}
+
+// ── SCORE ANIMATION ─────────────────────────────────────
+function popScoreVal() {
+  const el = document.getElementById('hud-score');
+  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+  setTimeout(()=>el.classList.remove('pop'), 250);
+}
+
+// ── UPDATE HUD ───────────────────────────────────────────
+function updateHUD() {
+  document.getElementById('hud-score').textContent  = S.score;
+  document.getElementById('target-num').textContent = S.target;
+  const tn = document.getElementById('target-num');
+  tn.classList.remove('ping'); void tn.offsetWidth; tn.classList.add('ping');
+  setTimeout(()=>tn.classList.remove('ping'), 250);
+}
+
+function updateTimerBar() {
+  const pct = (S.timeLeft / S.timeTotal) * 100;
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = pct + '%';
+  bar.className = 'timer-bar-fill' + (pct<25?' danger':pct<50?' warn':'');
+}
+
+// ── HINT ────────────────────────────────────────────────
+function showHint() {
+  if(S.hintUsed) return;
+  S.hintUsed = true;
+  document.getElementById('hint-btn').style.opacity = '0.3';
+
+  // Find a valid combo for the current target
+  const alive = S.bubbles.filter(b=>b.alive && !b.popping);
+  for(let i=0;i<alive.length;i++) {
+    for(let j=i+1;j<alive.length;j++){
+      if(alive[i].val + alive[j].val === S.target) {
+        alive[i].hinted = alive[j].hinted = true;
+        alive[i].hintTimer = alive[j].hintTimer = 3;
+        return;
+      }
+    }
+  }
+  // 3-bubble hint
+  for(let i=0;i<alive.length;i++)
+    for(let j=i+1;j<alive.length;j++)
+      for(let k=j+1;k<alive.length;k++)
+        if(alive[i].val+alive[j].val+alive[k].val===S.target){
+          alive[i].hinted=alive[j].hinted=alive[k].hinted=true;
+          alive[i].hintTimer=alive[j].hintTimer=alive[k].hintTimer=3;
+          return;
+        }
+}
+
+// ── END GAME ─────────────────────────────────────────────
+function endGame(quit) {
+  S.running = false;
+  clearInterval(S.timerHandle);
+
+  setHS(currentMode, S.score);
+
+  const acc = S.attempts > 0 ? Math.round((S.pops/S.attempts)*100) : 0;
+
+  let emoji, headline, sub, msg;
+  if(quit){ emoji='👋'; headline='See ya!'; sub='Come back for more!'; msg=''; }
+  else if(S.score===0){ emoji='😅'; headline='Keep trying!'; sub='Math gets easier with practice'; msg='Tip: <strong>select 2–4 bubbles</strong> and tap POP when they add up to the target!'; }
+  else if(S.pops>=15){ emoji='🔥'; headline='ON FIRE!'; sub='You\'re a math machine'; msg=`Incredible — <strong>${S.pops} pops</strong> with <strong>${acc}%</strong> accuracy!`; }
+  else if(S.pops>=8) { emoji='🎉'; headline='Great game!'; sub='Solid math skills'; msg=`<strong>${S.pops} pops</strong> and a best streak of <strong>×${S.bestStreak}</strong>. Can you beat it?`; }
+  else               { emoji='⭐'; headline='Nice!'; sub='Getting warmed up'; msg=`You scored <strong>${S.score} points</strong>. Try again to beat it!`; }
+
+  document.getElementById('res-emoji').textContent      = emoji;
+  document.getElementById('res-headline').textContent   = headline;
+  document.getElementById('res-sub').textContent        = sub;
+  document.getElementById('res-score').textContent      = S.score;
+  document.getElementById('res-pops').textContent       = S.pops;
+  document.getElementById('res-acc').textContent        = acc+'%';
+  document.getElementById('res-msg').innerHTML          = msg;
+  document.getElementById('btn-again').textContent      = 'Play Again';
+
+  showScreen('s-results');
+  renderHS();
+}
+
+// ── WINDOW RESIZE ────────────────────────────────────────
+window.addEventListener('resize', ()=>{ if(document.getElementById('s-game').classList.contains('active')){ resizeCanvas(); } });
+
+// ── BOOT ─────────────────────────────────────────────────
+renderHS();
+</script>
+</body>
+</html>
