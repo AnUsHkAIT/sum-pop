@@ -1,12 +1,16 @@
 **Sum Pop**
+
 Sports Academy Games — Web Game Developer Submission
 Anushka | [paste your Render URL here]
 
 **Play the game**
+
 Open index.html in any browser. No install, no server, no build step needed.
 
 **What is Sum Pop?**
+
 A math bubble game where you select numbers that add up to a target, then pop them. The math is not a quiz sitting on top of the game. The math is the game. You cannot do anything without doing addition.
+
 Three difficulty levels:
 
 Easy — targets 5 to 15, numbers 1 to 9, 90 seconds
@@ -16,6 +20,7 @@ Hard — targets 15 to 50, numbers 1 to 25, 60 seconds
 Each level has a streak system, combo popups, level progression every 5 correct pops, a hint button, high scores saved locally, and bubble refill when the board gets sparse.
 
 **Why this design works**
+
 The mechanic forces real math.
 You see a target number. You scan the board. You build a sum in your head. You tap the bubbles. You either got it or you didn't. There is no option to skip the math or guess randomly because wrong attempts break your streak.
 The addiction loop.
@@ -26,6 +31,7 @@ Level progression.
 After every 5 correct pops the numbers get slightly larger. You are always being pushed forward without a difficulty wall appearing suddenly.
 
 **AI workflow used to build this**
+
 Phase 1 — Concept
 Used Claude to define the mechanic. The key question was: "what is a game where the math is the action, not the reward?" The bubble selection concept came from that constraint.
 Phase 2 — Design brief
@@ -36,6 +42,7 @@ Phase 4 — Assembly
 Claude Code generated the game engine, bubble physics, no-overlap placement algorithm, and the sum validation logic. Cursor was used to iterate on edge cases like bubble refill and hint detection. Total build time was around 30 minutes.
 
 **File structure**
+
 sum-pop
 ├── index.html    
 └── README.md    
