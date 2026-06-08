@@ -3,11 +3,11 @@
 Sports Academy Games — Web Game Developer Submission
 Anushka | [paste your Render URL here]
 
-<u>**Play the game**</u>
+<h2><u>Play the game</u></h2>
 
 Open index.html in any browser. No install, no server, no build step needed.
 
-<u>**What is Sum Pop?**</u>
+<h2><u>What is Sum Pop?</u></h2>
 
 A math bubble game where you select numbers that add up to a target, then pop them. The math is not a quiz sitting on top of the game. The math is the game. You cannot do anything without doing addition.
 
@@ -19,7 +19,7 @@ Hard — targets 15 to 50, numbers 1 to 25, 60 seconds
 
 Each level has a streak system, combo popups, level progression every 5 correct pops, a hint button, high scores saved locally, and bubble refill when the board gets sparse.
 
-<u>**Why this design works**</u>
+<h2><u>Why this design works</u></h2>
 
 The mechanic forces real math.
 You see a target number. You scan the board. You build a sum in your head. You tap the bubbles. You either got it or you didn't. There is no option to skip the math or guess randomly because wrong attempts break your streak.
@@ -30,7 +30,7 @@ Getting 3 or 4 pops in a row lights up a combo banner and multiplies your score.
 Level progression.
 After every 5 correct pops the numbers get slightly larger. You are always being pushed forward without a difficulty wall appearing suddenly.
 
-<u>**AI workflow used to build this**</u>
+<h2><u>AI workflow used to build this</u></h2>
 
 Phase 1 — Concept
 Used Claude to define the mechanic. The key question was: "what is a game where the math is the action, not the reward?" The bubble selection concept came from that constraint.
@@ -41,13 +41,13 @@ All visuals are rendered in HTML Canvas with JavaScript. In a full production bu
 Phase 4 — Assembly
 Claude Code generated the game engine, bubble physics, no-overlap placement algorithm, and the sum validation logic. Cursor was used to iterate on edge cases like bubble refill and hint detection. Total build time was around 30 minutes.
 
-<u>**File structure**</u>
+<h2><u>File structure</u></h2>
 
 sum-pop
 ├── index.html    
 └── README.md    
 
-**Known minor issues (and how I would fix them)**
+<h2><u>Known minor issues (and how I would fix them)</u></h2>
 Bubbles can overlap slightly after refill because the no-overlap check uses the original radius and does not account for the float animation offset. Fix: run placement check against the animated Y position, not the base Y.
 Hint button only works once per game. Intentional for balance, but in a production build I would give the player 3 hints total with a cooldown timer between uses.
 No sound yet. In production this would use the Web Audio API for a pop sound on correct, a thud on wrong, and a chime on level up. Ludo AI would generate the SFX.
