@@ -36,7 +36,7 @@ Phase 4 — Assembly
 Claude Code generated the game engine, bubble physics, no-overlap placement algorithm, and the sum validation logic. Cursor was used to iterate on edge cases like bubble refill and hint detection. Total build time was around 30 minutes.
 
 **File structure**
-sum-pop/
+sum-pop
 ├── index.html    
 └── README.md    
 
