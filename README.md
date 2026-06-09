@@ -1,7 +1,7 @@
 <h2><u>Sum Pop</u></h2>
 
 Sports Academy Games — Web Game Developer Submission
-Anushka | [paste your Render URL here]
+Anushka | https://sum-pop.onrender.com
 
 <h2><u>Play the game</u></h2>
 
