@@ -708,13 +708,13 @@ function renderSel(){
     d.className='sel-b';d.style.background=b.col;d.textContent=b.val;
     d.onclick=()=>toggleSel(b);row.insertBefore(d,pop);
   });
-  pop.classList.toggle('on',bs.length>=2);
+  pop.classList.toggle('on',bs.length>=1);
   updateSum();
 }
 
 // ── POP ──────────────────────────────────────────────
 function tryPop(){
-  if(!G.running||G.sel.length<2) return;
+  if(!G.running||G.sel.length<1) return;
   const bs=G.sel.map(id=>G.bubbles.find(b=>b.id===id)).filter(Boolean);
   const sum=bs.reduce((a,b)=>a+b.val,0);
   G.attempts++;
