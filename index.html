@@ -392,8 +392,8 @@ class Bubble{
     this.val=val; this.col=col;
     this.sel=false; this.alive=true;
     this.popping=false; this.popT=0;
-    this.vx=(Math.random()-.5)*.35;
-    this.vy=(Math.random()-.5)*.35;
+    this.vx=(Math.random()-.5)*.18;
+    this.vy=(Math.random()-.5)*.12;
     this.baseY=y;
     this.fOff=Math.random()*Math.PI*2;
     this.fSpd=.4+Math.random()*.4;
@@ -412,8 +412,8 @@ class Bubble{
       return;
     }
     this.y=this.baseY+Math.sin(t*this.fSpd+this.fOff)*5;
-    this.x+=this.vx*dt*28;
-    this.baseY+=this.vy*dt*6;
+    this.x+=this.vx*dt*18;
+    this.baseY+=this.vy*dt*4;
     const m=this.r+4;
     if(this.x<m){this.x=m;this.vx=Math.abs(this.vx);}
     if(this.x>W-m){this.x=W-m;this.vx=-Math.abs(this.vx);}
@@ -627,6 +627,29 @@ function draw(){
       ctx.beginPath();ctx.moveTo(bs[i].x,bs[i].y);ctx.lineTo(bs[i+1].x,bs[i+1].y);ctx.stroke();
     }
     ctx.setLineDash([]);
+  }
+
+  // Bubble separation — prevent overlap
+  const liveBubbles = G.bubbles.filter(b=>b.alive&&!b.popping&&!b.spawning);
+  for(let i=0;i<liveBubbles.length;i++){
+    for(let j=i+1;j<liveBubbles.length;j++){
+      const a=liveBubbles[i], b=liveBubbles[j];
+      const dx=a.x-b.x, dy=a.baseY-b.baseY;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      const minDist=a.r+b.r+6;
+      if(dist<minDist&&dist>0){
+        const force=(minDist-dist)/minDist*0.4;
+        const nx=dx/dist, ny=dy/dist;
+        a.x+=nx*force*2; a.baseY+=ny*force*2;
+        b.x-=nx*force*2; b.baseY-=ny*force*2;
+        // clamp to canvas
+        const m=a.r+4;
+        a.x=Math.max(m,Math.min(W-m,a.x));
+        a.baseY=Math.max(m,Math.min(H-m,a.baseY));
+        b.x=Math.max(b.r+4,Math.min(W-b.r-4,b.x));
+        b.baseY=Math.max(b.r+4,Math.min(H-b.r-4,b.baseY));
+      }
+    }
   }
 
   G.bubbles.forEach(b=>{b.update(G.t>0?.016:0,G.t);b.draw(G.t);});
