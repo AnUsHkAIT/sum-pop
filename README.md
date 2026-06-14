@@ -46,8 +46,3 @@ Claude Code generated the game engine, bubble physics, no-overlap placement algo
 sum-pop
 ├── index.html    
 └── README.md    
-
-<h2><u>Known minor issues (and how I would fix them)</u></h2>
-Bubbles can overlap slightly after refill because the no-overlap check uses the original radius and does not account for the float animation offset. Fix: run placement check against the animated Y position, not the base Y.
-Hint button only works once per game. Intentional for balance, but in a production build I would give the player 3 hints total with a cooldown timer between uses.
-No sound yet. In production this would use the Web Audio API for a pop sound on correct, a thud on wrong, and a chime on level up. Ludo AI would generate the SFX.
