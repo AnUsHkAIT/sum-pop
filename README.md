@@ -1,8 +1,3 @@
-<h2><u>Sum Pop</u></h2>
-
-Sports Academy Games — Web Game Developer Submission
-Anushka | https://sum-pop.onrender.com
-
 <h2><u>Play the game</u></h2>
 
 Open index.html in any browser. No install, no server, no build step needed.
