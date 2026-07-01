@@ -24,20 +24,3 @@ Streak and combo system.
 Getting 3 or 4 pops in a row lights up a combo banner and multiplies your score. Kids will chase that multiplier.
 Level progression.
 After every 5 correct pops the numbers get slightly larger. You are always being pushed forward without a difficulty wall appearing suddenly.
-
-<h2><u>AI workflow used to build this</u></h2>
-
-Phase 1 — Concept
-Used Claude to define the mechanic. The key question was: "what is a game where the math is the action, not the reward?" The bubble selection concept came from that constraint.
-Phase 2 — Design brief
-Ran a design session in Claude to define the visual system: colour palette, typography, animation behaviour, screen states, HUD layout. The spec covered the title screen, game screen, results screen, feedback states, and the bubble rendering approach.
-Phase 3 — Art and asset generation
-All visuals are rendered in HTML Canvas with JavaScript. In a full production build this is where Ludo AI would generate the bubble sprites, background textures, and pop particle sheets. The Ludo prompt anchor for this game would be: "colourful round bubbles with shine highlight, bold number labels, cel shaded, transparent background, arcade game style."
-Phase 4 — Assembly
-Claude Code generated the game engine, bubble physics, no-overlap placement algorithm, and the sum validation logic. Cursor was used to iterate on edge cases like bubble refill and hint detection. Total build time was around 30 minutes.
-
-<h2><u>File structure</u></h2>
-
-sum-pop
-├── index.html    
-└── README.md    
